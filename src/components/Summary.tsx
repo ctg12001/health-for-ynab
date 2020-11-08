@@ -26,11 +26,6 @@ const Summary = (props: CommonProps) => {
         expenses: calculateExpenses(budgetData.monthDetails, budgetData.accounts, dateRange.startDate, dateRange.endDate),
         cash: calculateCash(budgetData.monthDetails, dateRange.endDate),
       });
-      console.log({
-        income: calculateIncome(budgetData.monthDetails, dateRange.startDate, dateRange.endDate),
-        expenses: calculateExpenses(budgetData.monthDetails, budgetData.accounts, dateRange.startDate, dateRange.endDate),
-        cash: calculateCash(budgetData.monthDetails, dateRange.endDate),
-      });
     }, [budgetData, dateRange]);
 
     return (
@@ -41,8 +36,8 @@ const Summary = (props: CommonProps) => {
             <Gauge
               id="income"
               title="% of Income Saved"
-              value={(calculations.income - calculations.expenses) * 100 / calculations.income}
-              ranges={[0, 5, 20, 50]}
+              value={(calculations.income - calculations.expenses) / calculations.income}
+              ranges={[-.2, .05, .2, .5]}
             />
           </Grid>
           <Grid item xs={6}>

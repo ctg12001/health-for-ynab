@@ -25,7 +25,6 @@ const Gauge = (props: GaugeProps) => {
 
     const totalArc = ranges[3] - ranges[0];
 
-
     return <>
         <Typography variant="h6" gutterBottom align="center">
             {title}
@@ -39,7 +38,7 @@ const Gauge = (props: GaugeProps) => {
             arcPadding={0.02}
             style={GaugeStyle}
             textColor={"#444"}
-            formatTextValue={formatLabel}
+            formatTextValue={formatLabel ? formatLabel : (valueText: string) => (value * 100).toFixed(2) + "%"}
         />
     </>
 }
