@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Button, Grid } from '@material-ui/core';
+import { Button, Grid, makeStyles } from '@material-ui/core';
 import { getYearsInRange } from '../utils/date';
 import { DateRange } from '../types/CommonProps';
 
@@ -15,8 +15,16 @@ interface DatePickerProps {
   setDateRange: React.Dispatch<React.SetStateAction<DateRange>>;
 }
 
+const useStyles = makeStyles((theme) => ({
+  datePicker: {
+    paddingBottom: theme.spacing(1),
+  },
+}));
+
 const DatePicker = (props: DatePickerProps) => {
   const {minDate, setDateRange} = props;
+
+  const classes = useStyles();
 
   const [selected, setSelected] = useState<string>("last");
 
@@ -69,7 +77,7 @@ const DatePicker = (props: DatePickerProps) => {
   });
 
   return (
-    <Grid container justify="flex-end" spacing={1}>
+    <Grid container justify="flex-end" spacing={1} className={classes.datePicker}>
       {dateButtons}
     </Grid>
   );

@@ -6,6 +6,7 @@ import { calculateExpenses } from "../calculations/expenses";
 import { calculateCash } from "../calculations/cash";
 import Gauge from "./Gauge";
 import { Grid } from "@material-ui/core";
+import CurrencyDisplay from "./CurrencyDisplay";
 
 export interface Calculations {
   income: number;
@@ -32,6 +33,24 @@ const Summary = (props: CommonProps) => {
       <>
       {calculations?.income ?
         <Grid container spacing={2}>
+          <Grid item xs={4}>
+            <CurrencyDisplay
+              amount={calculations.income}
+              title="Income"
+            />
+          </Grid>
+          <Grid item xs={4}>
+            <CurrencyDisplay
+              amount={calculations.expenses}
+              title="Expenses"
+            />
+          </Grid>
+          <Grid item xs={4}>
+            <CurrencyDisplay
+              amount={calculations.cash}
+              title="Cash"
+            />
+          </Grid>
           <Grid item xs={6}>
             <Gauge
               id="income"
