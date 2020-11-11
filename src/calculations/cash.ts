@@ -1,5 +1,5 @@
 import { MonthDetail } from "ynab";
-import { serializeDate } from "../utils/date";
+import { getMonthsInRange, serializeDate } from "../utils/date";
 
 export const calculateCash = (
   months: Map<string, MonthDetail>,
@@ -19,4 +19,20 @@ export const calculateCash = (
   });
 
   return cash;
+};
+
+export const calculateCashHistory = (
+  months: Map<string, MonthDetail>,
+  startMonth: Date,
+  endMonth: Date
+) => {
+  return getMonthsInRange(startMonth, endMonth).map((month: Date) => {
+    return {
+      name: month.toLocaleDateString("en-US", {
+        month: "short",
+        year: "numeric",
+      }),
+      cash: calculateCash(months, month),
+    };
+  });
 };

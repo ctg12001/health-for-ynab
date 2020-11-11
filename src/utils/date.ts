@@ -1,6 +1,6 @@
 export const getMonthsInRange = (startDate: Date, endDate: Date): Date[] => {
   const dates: Date[] = [];
-  while (startDate < endDate) {
+  while (startDate <= endDate) {
     dates.push(startDate);
     startDate = new Date(startDate.getFullYear(), startDate.getMonth() + 1, 1);
   }

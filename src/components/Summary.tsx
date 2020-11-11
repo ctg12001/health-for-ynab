@@ -3,7 +3,7 @@ import BudgetDataContext from "../context/BudgetDataContext";
 import { calculateIncome } from "../calculations/income";
 import { CommonProps } from "../types/CommonProps";
 import { calculateExpenses } from "../calculations/expenses";
-import { calculateCash } from "../calculations/cash";
+import { calculateCash, calculateCashHistory } from "../calculations/cash";
 import Gauge from "./Gauge";
 import { Grid } from "@material-ui/core";
 import CurrencyDisplay from "./CurrencyDisplay";
@@ -12,12 +12,14 @@ import {
   calculateRetirementTransfers,
 } from "../calculations/retirement";
 import { monthsBetweenDates } from "../utils/date";
+import Chart from "./Chart";
 
 export interface Calculations {
   income: number;
   expenses: number;
   cash: number;
   retirementContributions: number;
+  historicalCash: { name: string; cash: number }[];
 }
 
 const Summary = (props: CommonProps) => {
@@ -59,6 +61,11 @@ const Summary = (props: CommonProps) => {
         ) - retirementTransfers,
       cash: calculateCash(budgetData.monthDetails, dateRange.endDate),
       retirementContributions,
+      historicalCash: calculateCashHistory(
+        budgetData.monthDetails,
+        dateRange.startDate,
+        dateRange.endDate
+      ),
     });
   }, [budgetData, dateRange]);
 
@@ -106,6 +113,9 @@ const Summary = (props: CommonProps) => {
               }
               ranges={[0, 3, 6, 12]}
             />
+          </Grid>
+          <Grid item xs={12}>
+            <Chart data={calculations.historicalCash} title="Cash" />
           </Grid>
         </Grid>
       ) : (
