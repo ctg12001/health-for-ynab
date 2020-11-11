@@ -7,11 +7,13 @@ import { calculateCash } from "../calculations/cash";
 import Gauge from "./Gauge";
 import { Grid } from "@material-ui/core";
 import CurrencyDisplay from "./CurrencyDisplay";
+import { calculateRetirementContributions, calculateRetirementTransfers } from "../calculations/retirement";
 
 export interface Calculations {
   income: number;
   expenses: number;
   cash: number;
+  retirementContributions: number;
 };
 
 const Summary = (props: CommonProps) => {
@@ -22,10 +24,14 @@ const Summary = (props: CommonProps) => {
     const [calculations, setCalculations] = useState<Calculations>();
 
     useEffect(() => {
+      const retirementContributions = calculateRetirementContributions(budgetData.accounts, budgetData.transactions, dateRange.startDate, dateRange.endDate);
+      const retirementTransfers = calculateRetirementTransfers(budgetData.accounts, budgetData.transactions, dateRange.startDate, dateRange.endDate);
+
       setCalculations({
-        income: calculateIncome(budgetData.monthDetails, dateRange.startDate, dateRange.endDate),
-        expenses: calculateExpenses(budgetData.monthDetails, budgetData.accounts, dateRange.startDate, dateRange.endDate),
+        income: calculateIncome(budgetData.monthDetails, dateRange.startDate, dateRange.endDate) + retirementContributions - retirementTransfers,
+        expenses: calculateExpenses(budgetData.monthDetails, budgetData.accounts, dateRange.startDate, dateRange.endDate) - retirementTransfers,
         cash: calculateCash(budgetData.monthDetails, dateRange.endDate),
+        retirementContributions,
       });
     }, [budgetData, dateRange]);
 
@@ -33,22 +39,28 @@ const Summary = (props: CommonProps) => {
       <>
       {calculations?.income ?
         <Grid container spacing={2}>
-          <Grid item xs={4}>
+          <Grid item xs={3}>
             <CurrencyDisplay
               amount={calculations.income}
               title="Income"
             />
           </Grid>
-          <Grid item xs={4}>
+          <Grid item xs={3}>
             <CurrencyDisplay
               amount={calculations.expenses}
               title="Expenses"
             />
           </Grid>
-          <Grid item xs={4}>
+          <Grid item xs={3}>
             <CurrencyDisplay
               amount={calculations.cash}
               title="Cash"
+            />
+          </Grid>
+          <Grid item xs={3}>
+            <CurrencyDisplay
+              amount={calculations.retirementContributions}
+              title="Retirement Contributions"
             />
           </Grid>
           <Grid item xs={6}>

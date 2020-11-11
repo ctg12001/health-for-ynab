@@ -20,6 +20,7 @@ const Budget = (props: { ynabAPI: api }) => {
     accounts: new Map<string, Account>(),
     monthSummaries: [],
     monthDetails: new Map<string, MonthDetail>(),
+    transactions: [],
   });
 
   const today = new Date();
@@ -57,6 +58,18 @@ const Budget = (props: { ynabAPI: api }) => {
     return monthSummaries;
   }, [budgetId, ynabAPI.months]);
 
+  const getTransactions = useCallback(async () => {
+    if (budgetData.transactions.length > 0) {
+      return budgetData.transactions;
+    }
+
+    const transactions = await ynabAPI.transactions.getTransactions(budgetId).then((transactionsResponse) => {
+      return transactionsResponse.data.transactions;
+    });
+
+    return transactions;
+  }, [budgetId, ynabAPI.transactions]);
+
   const getMissingMonthDetails = useCallback(async (monthsToFetch: MonthSummary[]) => {
     const monthDetails: MonthDetail[] = [];
     await asyncForEach(monthsToFetch, async (month) => {
@@ -69,10 +82,12 @@ const Budget = (props: { ynabAPI: api }) => {
   useEffect(() => {
     Promise.all([
       getAccounts(),
-      getMonthSummaries()
+      getMonthSummaries(),
+      getTransactions()
     ]).then(([
       accountMap,
-      monthSummaries
+      monthSummaries,
+      transactions
     ]) => {
       let minMonthDate = new Date();
       const monthsToFetch = monthSummaries.filter((month) => {
@@ -91,11 +106,12 @@ const Budget = (props: { ynabAPI: api }) => {
         setBudgetData({
           accounts: accountMap,
           monthSummaries: monthSummaries,
-          monthDetails: monthDetailMap
+          monthDetails: monthDetailMap,
+          transactions,
         });
-      })
+      });
     }, () => {});
-  }, [dateRange.endDate, dateRange.startDate, getAccounts, getMissingMonthDetails, getMonthSummaries]);
+  }, [dateRange.endDate, dateRange.startDate, getAccounts, getMissingMonthDetails, getMonthSummaries, getTransactions]);
 
   return <BudgetDataProvider value={budgetData}>
     <DatePicker minDate={minDate} setDateRange={setDateRange}/>
