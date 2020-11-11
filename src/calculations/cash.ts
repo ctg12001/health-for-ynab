@@ -1,7 +1,10 @@
 import { MonthDetail } from "ynab";
 import { serializeDate } from "../utils/date";
 
-export const calculateCash = (months: Map<string, MonthDetail>, month: Date): number => {
+export const calculateCash = (
+  months: Map<string, MonthDetail>,
+  month: Date
+): number => {
   const monthDetail = months.get(serializeDate(month));
 
   if (monthDetail == null) {
@@ -10,7 +13,7 @@ export const calculateCash = (months: Map<string, MonthDetail>, month: Date): nu
 
   let cash: number = monthDetail.to_be_budgeted;
   monthDetail.categories.forEach((category) => {
-    if (category.name !== 'Inflows') {
+    if (category.name !== "Inflows") {
       cash += category.balance;
     }
   });

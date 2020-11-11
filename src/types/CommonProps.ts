@@ -2,7 +2,7 @@ import { api } from "ynab";
 
 export interface DateRange {
   startDate: Date;
-  endDate: Date;  
+  endDate: Date;
 }
 
 export interface CommonProps {
