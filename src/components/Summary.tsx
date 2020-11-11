@@ -11,6 +11,7 @@ import {
   calculateRetirementContributions,
   calculateRetirementTransfers,
 } from "../calculations/retirement";
+import { monthsBetweenDates } from "../utils/date";
 
 export interface Calculations {
   income: number;
@@ -95,7 +96,11 @@ const Summary = (props: CommonProps) => {
             <Gauge
               id="cash"
               title="Emergency Fund"
-              value={(12 * calculations.cash) / calculations.expenses}
+              value={
+                (monthsBetweenDates(dateRange.startDate, dateRange.endDate) *
+                  calculations.cash) /
+                calculations.expenses
+              }
               formatLabel={(value: string) =>
                 (parseInt(value) * 12) / 100 + " Months"
               }
