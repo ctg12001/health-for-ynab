@@ -11,6 +11,7 @@ import {
   summarizeMonths,
 } from "../calculations/monthSummary";
 import IncomeSaved from "./charts/IncomeSaved";
+import EmergencyFund from "./charts/EmergencyFund";
 
 const Summary = (props: CommonProps) => {
   const { dateRange } = props;
@@ -94,13 +95,22 @@ const Summary = (props: CommonProps) => {
         <></>
       )}
       {monthSummaries ? (
-        <Grid item xs={12}>
-          <IncomeSaved
-            months={monthSummaries}
-            startDate={dateRange.startDate}
-            endDate={dateRange.endDate}
-          />
-        </Grid>
+        <>
+          <Grid item xs={6}>
+            <IncomeSaved
+              months={monthSummaries}
+              startDate={dateRange.startDate}
+              endDate={dateRange.endDate}
+            />
+          </Grid>
+          <Grid item xs={6}>
+            <EmergencyFund
+              months={monthSummaries}
+              startDate={dateRange.startDate}
+              endDate={dateRange.endDate}
+            />
+          </Grid>
+        </>
       ) : (
         <></>
       )}

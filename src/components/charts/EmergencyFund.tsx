@@ -3,20 +3,20 @@ import { MonthMetrics } from "../../calculations/monthSummary";
 import { getMonthsInRange, serializeDate } from "../../utils/date";
 import Chart from "./Chart";
 
-interface IncomeSavedProps {
+interface EmergencyFundProps {
   months: Map<string, MonthMetrics>;
   startDate: Date;
   endDate: Date;
 }
 
-interface IncomeSavedDataPoint {
+interface EmergencyFundDataPoint {
   month: string;
-  "Income Saved": number;
+  "Months of Savings": number;
 }
 
-const IncomeSaved = (props: IncomeSavedProps) => {
+const EmergencyFund = (props: EmergencyFundProps) => {
   const { months, startDate, endDate } = props;
-  const data: IncomeSavedDataPoint[] = [];
+  const data: EmergencyFundDataPoint[] = [];
   getMonthsInRange(startDate, endDate).forEach((date) => {
     const month = months.get(serializeDate(date));
     if (month) {
@@ -25,36 +25,35 @@ const IncomeSaved = (props: IncomeSavedProps) => {
           month: "short",
           year: "numeric",
         }),
-        "Income Saved": (month?.income - month?.expenses) / month?.income,
+        "Months of Savings": (month?.cash * 12) / month?.expenses,
       });
     }
   });
   return (
-    <Chart<IncomeSavedDataPoint>
+    <Chart<EmergencyFundDataPoint>
       data={data}
       x="month"
-      y="Income Saved"
-      tickFormatter={(value) => value * 100 + "%"}
+      y="Months of Savings"
       tooltipFormatter={(value) =>
-        (parseFloat(value.toString()) * 100).toFixed(2) + "%"
+        parseFloat(value.toString()).toFixed(1) + " Months"
       }
       referenceRanges={[
         {
           color: "green",
-          y1: 0.2,
+          y1: 6,
         },
         {
           color: "yellow",
-          y1: 0.05,
-          y2: 0.2,
+          y1: 3,
+          y2: 6,
         },
         {
           color: "red",
-          y2: 0.05,
+          y2: 3,
         },
       ]}
     />
   );
 };
 
-export default IncomeSaved;
+export default EmergencyFund;
