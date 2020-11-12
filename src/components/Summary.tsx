@@ -4,7 +4,7 @@ import { CommonProps } from "../types/CommonProps";
 import Gauge from "./Gauge";
 import { Grid } from "@material-ui/core";
 import CurrencyDisplay from "./CurrencyDisplay";
-import { monthsBetweenDates } from "../utils/date";
+import { addMonths, monthsBetweenDates } from "../utils/date";
 import {
   MonthMetrics,
   summarizeMonth,
@@ -39,7 +39,7 @@ const Summary = (props: CommonProps) => {
         budgetData.monthDetails,
         budgetData.accounts,
         budgetData.transactions,
-        dateRange.startDate,
+        addMonths(dateRange.startDate, -12),
         dateRange.endDate
       )
     );

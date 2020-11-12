@@ -56,7 +56,7 @@ export const summarizeMonths = (
 ): Map<string, MonthMetrics> => {
   const monthSummaries = new Map<string, MonthMetrics>();
 
-  let endRangeDate = addMonths(startDate, 3);
+  let endRangeDate = addMonths(startDate, 12);
   while (endRangeDate <= endDate) {
     monthSummaries.set(
       serializeDate(endRangeDate),

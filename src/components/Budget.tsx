@@ -5,7 +5,7 @@ import { BudgetData, BudgetDataProvider } from "../context/BudgetDataContext";
 import { DateRange } from "../types/CommonProps";
 import DatePicker from "./DatePicker";
 import Summary from "./Summary";
-import { serializeDate, stringToDate } from "../utils/date";
+import { addMonths, serializeDate, stringToDate } from "../utils/date";
 import { asyncForEach } from "../utils/list";
 
 interface Params {
@@ -100,7 +100,7 @@ const Budget = (props: { ynabAPI: api }) => {
           minMonthDate = minMonthDate < monthDate ? minMonthDate : monthDate;
           return (
             !budgetData.monthDetails.has(serializeDate(monthDate)) &&
-            monthDate >= dateRange.startDate &&
+            monthDate >= addMonths(dateRange.startDate, -12) &&
             monthDate <= dateRange.endDate
           );
         });
