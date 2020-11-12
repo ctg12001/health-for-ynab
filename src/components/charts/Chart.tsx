@@ -8,21 +8,21 @@ import {
   Tooltip,
   YAxis,
   ResponsiveContainer,
+  TickFormatterFunction,
+  TooltipFormatter,
 } from "recharts";
-import { numberToCurrency } from "../utils/text";
 
-interface DataPoint {
-  name: string;
-  cash: number;
-}
-
-interface ChartProps {
+interface ChartProps<T extends object> {
   title: string;
-  data: DataPoint[];
+  data: T[];
+  x: string;
+  y: string;
+  tickFormatter?: TickFormatterFunction;
+  tooltipFormatter?: TooltipFormatter;
 }
 
-const Chart = (props: ChartProps) => {
-  const { data, title } = props;
+const Chart = <T extends object>(props: ChartProps<T>) => {
+  const { data, title, x, y, tickFormatter, tooltipFormatter } = props;
 
   return (
     <>
@@ -35,12 +35,10 @@ const Chart = (props: ChartProps) => {
           margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
         >
           <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="name" />
-          <YAxis tickFormatter={(value) => numberToCurrency(value)} />
-          <Tooltip
-            formatter={(value) => numberToCurrency(parseInt(value.toString()))}
-          />
-          <Line type="monotone" dataKey="cash" stroke="#8884d8" />
+          <XAxis dataKey={x} />
+          <YAxis tickFormatter={tickFormatter} />
+          <Tooltip formatter={tooltipFormatter} />
+          <Line type="monotone" dataKey={y} stroke="#8884d8" />
         </LineChart>
       </ResponsiveContainer>
     </>

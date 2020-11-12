@@ -2,7 +2,7 @@ export const getMonthsInRange = (startDate: Date, endDate: Date): Date[] => {
   const dates: Date[] = [];
   while (startDate <= endDate) {
     dates.push(startDate);
-    startDate = new Date(startDate.getFullYear(), startDate.getMonth() + 1, 1);
+    startDate = addMonths(startDate, 1);
   }
   return dates;
 };
@@ -41,4 +41,8 @@ export const monthsBetweenDates = (date1: Date, date2: Date) => {
     date1.getMonth() +
     date2.getMonth()
   );
+};
+
+export const addMonths = (date: Date, months: number): Date => {
+  return new Date(date.getFullYear(), date.getMonth() + months, 1);
 };

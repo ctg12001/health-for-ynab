@@ -1,78 +1,53 @@
 import React, { useContext, useEffect, useState } from "react";
 import BudgetDataContext from "../context/BudgetDataContext";
-import { calculateIncome } from "../calculations/income";
 import { CommonProps } from "../types/CommonProps";
-import { calculateExpenses } from "../calculations/expenses";
-import { calculateCash, calculateCashHistory } from "../calculations/cash";
 import Gauge from "./Gauge";
 import { Grid } from "@material-ui/core";
 import CurrencyDisplay from "./CurrencyDisplay";
-import {
-  calculateRetirementContributions,
-  calculateRetirementTransfers,
-} from "../calculations/retirement";
 import { monthsBetweenDates } from "../utils/date";
-import Chart from "./Chart";
-
-export interface Calculations {
-  income: number;
-  expenses: number;
-  cash: number;
-  retirementContributions: number;
-  historicalCash: { name: string; cash: number }[];
-}
+import {
+  MonthMetrics,
+  summarizeMonth,
+  summarizeMonths,
+} from "../calculations/monthSummary";
+import IncomeSaved from "./charts/IncomeSaved";
 
 const Summary = (props: CommonProps) => {
   const { dateRange } = props;
 
   const budgetData = useContext(BudgetDataContext);
 
-  const [calculations, setCalculations] = useState<Calculations>();
+  const [calculations, setCalculations] = useState<MonthMetrics>();
+  const [monthSummaries, setMonthSummaries] = useState<
+    Map<string, MonthMetrics>
+  >();
 
   useEffect(() => {
-    const retirementContributions = calculateRetirementContributions(
-      budgetData.accounts,
-      budgetData.transactions,
-      dateRange.startDate,
-      dateRange.endDate
-    );
-    const retirementTransfers = calculateRetirementTransfers(
-      budgetData.accounts,
-      budgetData.transactions,
-      dateRange.startDate,
-      dateRange.endDate
-    );
-
-    setCalculations({
-      income:
-        calculateIncome(
-          budgetData.monthDetails,
-          dateRange.startDate,
-          dateRange.endDate
-        ) +
-        retirementContributions -
-        retirementTransfers,
-      expenses:
-        calculateExpenses(
-          budgetData.monthDetails,
-          budgetData.accounts,
-          dateRange.startDate,
-          dateRange.endDate
-        ) - retirementTransfers,
-      cash: calculateCash(budgetData.monthDetails, dateRange.endDate),
-      retirementContributions,
-      historicalCash: calculateCashHistory(
+    setCalculations(
+      summarizeMonth(
         budgetData.monthDetails,
+        budgetData.accounts,
+        budgetData.transactions,
         dateRange.startDate,
         dateRange.endDate
-      ),
-    });
+      )
+    );
+
+    setMonthSummaries(
+      summarizeMonths(
+        budgetData.monthDetails,
+        budgetData.accounts,
+        budgetData.transactions,
+        dateRange.startDate,
+        dateRange.endDate
+      )
+    );
   }, [budgetData, dateRange]);
 
   return (
-    <>
+    <Grid container spacing={2}>
       {calculations?.income ? (
-        <Grid container spacing={2}>
+        <>
           <Grid item xs={3}>
             <CurrencyDisplay amount={calculations.income} title="Income" />
           </Grid>
@@ -114,14 +89,22 @@ const Summary = (props: CommonProps) => {
               ranges={[0, 3, 6, 12]}
             />
           </Grid>
-          <Grid item xs={12}>
-            <Chart data={calculations.historicalCash} title="Cash" />
-          </Grid>
+        </>
+      ) : (
+        <></>
+      )}
+      {monthSummaries ? (
+        <Grid item xs={12}>
+          <IncomeSaved
+            months={monthSummaries}
+            startDate={dateRange.startDate}
+            endDate={dateRange.endDate}
+          />
         </Grid>
       ) : (
         <></>
       )}
-    </>
+    </Grid>
   );
 };
 
