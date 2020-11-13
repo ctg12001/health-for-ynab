@@ -2,6 +2,23 @@ import { Account, TransactionDetail } from "ynab";
 import { stringToDate } from "../utils/date";
 import { filterMapValues } from "../utils/list";
 
+export const calculateRetirementBalance = (
+  accounts: Map<string, Account>,
+  transactions: TransactionDetail[],
+  month: Date
+) => {
+  let balance = 0;
+  _getRetirementTransactions(
+    accounts,
+    transactions,
+    new Date(-8640000000000000),
+    month
+  ).forEach((transaction) => {
+    balance += transaction.amount;
+  });
+  return balance;
+};
+
 export const calculateRetirementContributions = (
   accounts: Map<string, Account>,
   transactions: TransactionDetail[],

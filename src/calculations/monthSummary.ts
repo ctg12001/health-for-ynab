@@ -2,8 +2,10 @@ import { Account, MonthDetail, TransactionDetail } from "ynab";
 import { addMonths, monthsBetweenDates, serializeDate } from "../utils/date";
 import { calculateCash } from "./cash";
 import { calculateExpenses } from "./expenses";
+import { calculateFIAge } from "./fiAge";
 import { calculateIncome } from "./income";
 import {
+  calculateRetirementBalance,
   calculateRetirementContributions,
   calculateRetirementTransfers,
 } from "./retirement";
@@ -13,6 +15,7 @@ export interface MonthMetrics {
   expenses: number;
   retirementContributions: number;
   cash: number;
+  fiAge: number;
 }
 
 export const summarizeMonth = (
@@ -34,16 +37,31 @@ export const summarizeMonth = (
     startDate,
     endDate
   );
+
+  const retirementBalance = calculateRetirementBalance(
+    accounts,
+    transactions,
+    endDate
+  );
+
+  const expenses =
+    calculateExpenses(months, accounts, startDate, endDate) -
+    retirementTransfers;
   return {
     income:
       calculateIncome(months, startDate, endDate) +
       retirementContributions -
       retirementTransfers,
-    expenses:
-      calculateExpenses(months, accounts, startDate, endDate) -
-      retirementTransfers,
+    expenses,
     retirementContributions,
     cash: calculateCash(months, endDate),
+    fiAge: calculateFIAge(
+      retirementBalance,
+      expenses,
+      retirementContributions,
+      0.06,
+      0.04
+    ),
   };
 };
 

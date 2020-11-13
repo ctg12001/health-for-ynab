@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import BudgetDataContext from "../context/BudgetDataContext";
 import { CommonProps } from "../types/CommonProps";
 import Gauge from "./Gauge";
-import { Grid } from "@material-ui/core";
+import { Grid, Paper } from "@material-ui/core";
 import CurrencyDisplay from "./CurrencyDisplay";
 import { addMonths, monthsBetweenDates } from "../utils/date";
 import {
@@ -12,6 +12,7 @@ import {
 } from "../calculations/monthSummary";
 import IncomeSaved from "./charts/IncomeSaved";
 import EmergencyFund from "./charts/EmergencyFund";
+import RetirementAge from "./charts/RetirementAge";
 
 const Summary = (props: CommonProps) => {
   const { dateRange } = props;
@@ -47,7 +48,7 @@ const Summary = (props: CommonProps) => {
 
   return (
     <Grid container spacing={2}>
-      {calculations?.income ? (
+      {calculations?.income && monthSummaries ? (
         <>
           <Grid item xs={3}>
             <CurrencyDisplay amount={calculations.income} title="Income" />
@@ -64,51 +65,80 @@ const Summary = (props: CommonProps) => {
               title="Retirement Contributions"
             />
           </Grid>
-          <Grid item xs={6}>
-            <Gauge
-              id="income"
-              title="% of Income Saved"
-              value={
-                (calculations.income - calculations.expenses) /
-                calculations.income
-              }
-              ranges={[-0.2, 0.05, 0.2, 0.5]}
-            />
+          <Grid item xs={4}>
+            <Paper>
+              <Grid item xs={12}>
+                <Gauge
+                  id="income"
+                  title="% of Income Saved"
+                  value={
+                    (calculations.income - calculations.expenses) /
+                    calculations.income
+                  }
+                  ranges={[-0.2, 0.05, 0.2, 0.5]}
+                />
+                <Grid item xs={12}>
+                  <IncomeSaved
+                    months={monthSummaries}
+                    startDate={dateRange.startDate}
+                    endDate={dateRange.endDate}
+                  />
+                </Grid>
+              </Grid>
+            </Paper>
           </Grid>
-          <Grid item xs={6}>
-            <Gauge
-              id="cash"
-              title="Emergency Fund"
-              value={
-                (monthsBetweenDates(dateRange.startDate, dateRange.endDate) *
-                  calculations.cash) /
-                calculations.expenses
-              }
-              formatLabel={(value: string) =>
-                (parseInt(value) * 12) / 100 + " Months"
-              }
-              ranges={[0, 3, 6, 12]}
-            />
+          <Grid item xs={4}>
+            <Paper>
+              <Grid item xs={12}>
+                <Gauge
+                  id="cash"
+                  title="Emergency Fund"
+                  value={
+                    (monthsBetweenDates(
+                      dateRange.startDate,
+                      dateRange.endDate
+                    ) *
+                      calculations.cash) /
+                    calculations.expenses
+                  }
+                  formatLabel={(value: string) =>
+                    (parseFloat(value) * 12) / 100 + " Months"
+                  }
+                  ranges={[0, 3, 6, 12]}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <EmergencyFund
+                  months={monthSummaries}
+                  startDate={dateRange.startDate}
+                  endDate={dateRange.endDate}
+                />
+              </Grid>
+            </Paper>
           </Grid>
-        </>
-      ) : (
-        <></>
-      )}
-      {monthSummaries ? (
-        <>
-          <Grid item xs={6}>
-            <IncomeSaved
-              months={monthSummaries}
-              startDate={dateRange.startDate}
-              endDate={dateRange.endDate}
-            />
-          </Grid>
-          <Grid item xs={6}>
-            <EmergencyFund
-              months={monthSummaries}
-              startDate={dateRange.startDate}
-              endDate={dateRange.endDate}
-            />
+          <Grid item xs={4}>
+            <Paper>
+              <Grid item xs={12}>
+                <Gauge
+                  id="fiAge"
+                  title="Retirement Age"
+                  value={calculations.fiAge}
+                  formatLabel={(value: string) =>
+                    (40 + (parseFloat(value) * 45) / 100).toFixed(1) +
+                    " Years Old"
+                  }
+                  ranges={[40, 55, 65, 85]}
+                  reverseColors
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <RetirementAge
+                  months={monthSummaries}
+                  startDate={dateRange.startDate}
+                  endDate={dateRange.endDate}
+                />
+              </Grid>
+            </Paper>
           </Grid>
         </>
       ) : (
