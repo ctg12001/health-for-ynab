@@ -1,10 +1,19 @@
-import { Button, Typography } from "@material-ui/core";
+import { Button, Grid, makeStyles, Typography } from "@material-ui/core";
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { api, BudgetSummary } from "ynab";
 
+const useStyles = makeStyles((theme) => ({
+  button: {
+    height: theme.spacing(10),
+    width: theme.spacing(20),
+  },
+}));
+
 const BudgetSelect = (props: { ynabAPI: api }) => {
   const { ynabAPI } = props;
+  const classes = useStyles();
+
   const [budgets, setBudgets] = useState<BudgetSummary[]>([]);
 
   useEffect(() => {
@@ -16,25 +25,36 @@ const BudgetSelect = (props: { ynabAPI: api }) => {
     );
   }, [ynabAPI.budgets]);
 
+  console.log(budgets);
   const budgetButtons = budgets.map((budget) => {
     return (
-      <Link
-        key={budget.id}
-        to={`/${budget.id}`}
-        style={{ textDecoration: "none", paddingRight: "10px" }}
-      >
-        <Button variant="outlined">{budget.name}</Button>
-      </Link>
+      <Grid item key={budget.id}>
+        <Link to={`/${budget.id}`} style={{ textDecoration: "none" }}>
+          <Button
+            variant="contained"
+            color="primary"
+            className={classes.button}
+          >
+            {budget.name}
+          </Button>
+        </Link>
+      </Grid>
     );
   });
 
   return (
-    <div className="App">
-      <Typography variant="h3" gutterBottom>
-        Choose a budget
-      </Typography>
-      {budgetButtons}
-    </div>
+    <>
+      <Grid container justify="center">
+        <Grid item>
+          <Typography variant="h3" gutterBottom>
+            Choose a budget
+          </Typography>
+        </Grid>
+      </Grid>
+      <Grid container justify="space-evenly">
+        {budgetButtons}
+      </Grid>
+    </>
   );
 };
 
