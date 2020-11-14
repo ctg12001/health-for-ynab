@@ -1,6 +1,7 @@
 import { Account, MonthDetail, TransactionDetail } from "ynab";
 import { addMonths, monthsBetweenDates, serializeDate } from "../utils/date";
 import { calculateCash } from "./cash";
+import { calculateDebtPayment } from "./debt";
 import { calculateExpenses } from "./expenses";
 import { calculateFIAge } from "./fiAge";
 import { calculateIncome } from "./income";
@@ -15,6 +16,7 @@ export interface MonthMetrics {
   expenses: number;
   retirementContributions: number;
   cash: number;
+  debtPayments: number;
   fiAge: number;
 }
 
@@ -55,6 +57,7 @@ export const summarizeMonth = (
     expenses,
     retirementContributions,
     cash: calculateCash(months, endDate),
+    debtPayments: calculateDebtPayment(months, startDate, endDate),
     fiAge: calculateFIAge(
       retirementBalance,
       expenses,
