@@ -42,7 +42,7 @@ const Chart = <T extends object>(props: ChartProps<T>) => {
         y2={referenceRange.y2}
         fill={referenceRange.color}
         fillOpacity={0.15}
-        alwaysShow
+        ifOverflow="visible"
       />
     );
   });
