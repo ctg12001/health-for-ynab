@@ -23,6 +23,8 @@ const Budget = (props: { ynabAPI: api }) => {
     transactions: [],
   });
 
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+
   const today = new Date();
   const [dateRange, setDateRange] = useState<DateRange>({
     startDate: new Date(today.getFullYear() - 1, today.getMonth() - 1, 1),
@@ -92,6 +94,7 @@ const Budget = (props: { ynabAPI: api }) => {
   );
 
   useEffect(() => {
+    setIsLoading(true);
     Promise.all([getAccounts(), getMonthSummaries(), getTransactions()]).then(
       ([accountMap, monthSummaries, transactions]) => {
         let minMonthDate = new Date();
@@ -118,6 +121,7 @@ const Budget = (props: { ynabAPI: api }) => {
             monthDetails: monthDetailMap,
             transactions,
           });
+          setIsLoading(false);
         });
       },
       () => {}
@@ -134,7 +138,7 @@ const Budget = (props: { ynabAPI: api }) => {
   return (
     <BudgetDataProvider value={budgetData}>
       <DatePicker minDate={minDate} setDateRange={setDateRange} />
-      <Summary ynabAPI={ynabAPI} dateRange={dateRange} />
+      <Summary ynabAPI={ynabAPI} dateRange={dateRange} isLoading={isLoading} />
     </BudgetDataProvider>
   );
 };

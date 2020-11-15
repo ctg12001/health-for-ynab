@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import BudgetDataContext from "../context/BudgetDataContext";
 import { CommonProps } from "../types/CommonProps";
 import Gauge from "./Gauge";
-import { Grid, Paper } from "@material-ui/core";
+import { CircularProgress, Grid, makeStyles, Paper } from "@material-ui/core";
 import CurrencyDisplay from "./CurrencyDisplay";
 import { addMonths, monthsBetweenDates } from "../utils/date";
 import {
@@ -15,8 +15,27 @@ import EmergencyFund from "./charts/EmergencyFund";
 import RetirementAge from "./charts/RetirementAge";
 import Debt from "./charts/Debt";
 
-const Summary = (props: CommonProps) => {
-  const { dateRange } = props;
+interface SummaryProps extends CommonProps {
+  isLoading: boolean;
+}
+
+const useStyles = makeStyles((theme) => ({
+  overlay: {
+    position: "fixed",
+    width: "100%",
+    height: "100%",
+    top: 0,
+    bottom: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: "rgba(0,0,0,0.2)",
+    zIndex: 999,
+  },
+}));
+
+const Summary = (props: SummaryProps) => {
+  const { dateRange, isLoading } = props;
+  const classes = useStyles();
 
   const budgetData = useContext(BudgetDataContext);
 
@@ -49,6 +68,20 @@ const Summary = (props: CommonProps) => {
 
   return (
     <>
+      {isLoading ? (
+        <Grid
+          container
+          className={classes.overlay}
+          alignItems="center"
+          justify="center"
+        >
+          <Grid item>
+            <CircularProgress />
+          </Grid>
+        </Grid>
+      ) : (
+        <></>
+      )}
       {calculations?.income && monthSummaries ? (
         <>
           <Grid container spacing={3}>
