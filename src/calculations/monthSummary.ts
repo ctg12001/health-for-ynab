@@ -56,7 +56,7 @@ export const summarizeMonth = (
       retirementTransfers,
     expenses,
     retirementContributions,
-    cash: calculateCash(months, endDate),
+    cash: calculateCash(accounts, transactions, addMonths(endDate, 1)),
     debtPayments: calculateDebtPayment(months, startDate, endDate),
     fiAge: calculateFIAge(
       retirementBalance,
