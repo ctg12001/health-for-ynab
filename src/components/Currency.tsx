@@ -10,6 +10,8 @@ const Currency = (props: { amount: number }) => {
       displayType={"text"}
       thousandSeparator={true}
       prefix={"$"}
+      decimalScale={2}
+      fixedDecimalScale
     />
   );
 };
